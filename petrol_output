@@ -1,0 +1,38 @@
+Other Model:
+20 trees:
+Shuffled split
+Mean Abs Error 51.76500000000001
+Mean Sq Error 4216.166749999999
+Root Mean Sq Error 64.93201637097064
+
+Mean Abs Error 82.015
+Mean Sq Error 16153.195249999995
+Root Mean Sq Error 127.09522119261604
+
+200 trees:
+Shuffled split
+Mean Abs Error 48.124500000000005
+Mean Sq Error 3497.802072500001
+Root Mean Sq Error 59.142219035981405
+
+Mean Abs Error 74.59500000000003
+Mean Sq Error 13869.551645000005
+Root Mean Sq Error 117.76906064412675
+
+Our Model:
+Shuffled split, 20 Trees
+Mean Abs Error 41.46866666666668
+Mean Sq Error 2114.70870125
+Root Mean Sq Error 45.98596200200666
+
+Non-shuffled, 20 Trees:
+Mean Abs Error 77.37283333333332
+Mean Sq Error 14126.45908958333
+Root Mean Sq Error 118.8547815175449
+
+Shuffled split, 200 Trees:
+
+Non-shuffled, 200 Trees:
+Mean Abs Error 78.17261666666667
+Mean Sq Error 15912.128638197228
+Root Mean Sq Error 126.14328613999727

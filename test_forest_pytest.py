@@ -14,10 +14,10 @@ points = [{'Date': '2016-07-17', 'Confirm Time': 7.76, 'Block Size': 0.68, 'Cost
           {'Date': '2016-07-12', 'Confirm Time': 7.96, 'Block Size': 0.79, 'Cost/TXN': 5.49, 'Difficulty': 213398925331.0, 'TXN Vol': 166782085.8, 'Hash Rate': 1516960.89, 'Market Cap': 10240153706.8, 'Miners Rev': 1162507.11, 'TXN/Block': 1525.09, 'Number of TXN': 218089.0, 'Unique Addresses': 395742.0, 'Total Bitcoin': 15754325.0, 'TXN Fees': 57.33, 'Trade Vol': 26402272.48, 'TXN/Trade Ratio': 57.0098951949, 'Price': 664.8389999999999, 'Price Binary': 1}]
 
 labels = [num for num in range(len(points))]
-RFR = RandomForestRegressor(10)
+RFR = RandomForestRegressor(10, pool_num_attributes=4)
 attributes = points[0].keys()
 
-Tree = RandomTree
+Tree = RandomTree()
 
 def test_bootstrap():
     bootstrap_points, bootstrap_labels = RFR.bootstrap(points, labels, 4)

@@ -1,7 +1,1 @@
 # Ignore the following:
-
-petrol_output
-data_frames/petrol_df.pkl
-petrol_consumption.csv
-test.py
-random_tree_btc.py

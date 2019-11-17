@@ -6,12 +6,24 @@ from collections import defaultdict
 from pickle_dataset import load_data_frame
 
 # problems: gets attributes via list(points[0].keys), but each points may not have all attributes
-# size of subsample for num of subsamp boots = sqrt of num training samps
+
+# questions: max recursion depth sometimes reached for 200; not sure how many samples per leaf; can a leaf have
+# no samples? hmm hm; should we shuffle before split; should we set seed? but -> non-random trees
+# bc. how can we compare error rate as adjust hyper parameters
+#WHY is points ever passed as None
+# how do we deal with the random variation in MSE for predictions...?
+# kind of slow esp. c.f. pre-built model
+
+# should possible values be based purly on the data or range within the data?
+
+# should we allow a child to have no samples if all splits yield 0 for one group? but then what happens
+# if a test point IS to left or right? then what?
+
 class RandomForestRegressor:
     """
     Class for building a random forest and using it to predict values from input data.
     """
-    def __init__(self, num_estimators, pool_num_attributes=0):
+    def __init__(self, num_estimators, pool_num_attributes):
         """
         Class for building a r
         :param num_estimators: number of trees in forest
@@ -39,7 +51,7 @@ class RandomForestRegressor:
             raise Exception('Length of points must be non-zero and equal to length of labels.'
                             'Points length is {}, labels length is {}'.format(len_points, len_labels))
         # sample size for bootstrapping
-        sample_size = int(np.sqrt(len_points))
+        sample_size = len_points  #int(np.sqrt(len_points))
         # all categories for each point
         attributes = list(points[0].keys())
         # get range of values for attributes
@@ -135,11 +147,13 @@ class RandomTree:
         :param sample_attr_size: int, number of random attributes to consider for each node
         :return: dictionary where attribute category maps to set of possible values for that attribute
         """
+        if not points or not labels:
+            raise Warning("Must have at least 1 point and 1 label to train with.")
         num_samples = len(points)
         # create leaf node
         if num_samples <= 5:
             # predict based off of
-            self.prediction_val = np.mean(labels)
+            self.prediction_val = np.mean(labels) if labels else 0
             self.num_samples = num_samples
             return
         # get all possible attributes for the points
@@ -149,7 +163,7 @@ class RandomTree:
         # divide samples into two groups via best split (best attribute-value combo)
         split_data = self.split_by_best_feature(subset_attrs, points, labels, possible_vals)
         # average classification values
-        self.prediction_val = np.mean(labels)
+        #self.prediction_val = np.mean(labels)
         # node now knows how many samples it holds, etc
         self.num_samples = num_samples
         self.attribute = split_data['best_attr']
@@ -195,6 +209,9 @@ class RandomTree:
         best_true_labels = None
         best_false_labels = None
 
+        num_points = len(points)
+        if num_points <= 1:
+            raise Exception("Cannot split just one value")
         # get split score for each value for each attribute
         for attr in attributes:
             for val in possible_vals[attr]:
@@ -212,14 +229,17 @@ class RandomTree:
                             false_points.append(point)
                             false_labels.append(labels[point_idx])
 
+
+                # if split leaves a node with no samples, do not use this split
+                if not true_points or not false_points:
+                    continue
                 # get split score from true and false lists
-                #print("he", np.mean(true_labels))
-                true_means = [np.mean(true_labels)] * len(true_points) if true_labels else 0
-                false_means = [np.mean(false_labels)] * len(false_points) if false_labels else 0
-                #print("true, false", true_means, false_means)
-                true_score = mean_squared_error(true_means, true_labels)*len(true_points) if true_points else 0
-                false_score = mean_squared_error(false_means, false_labels)*len(false_points) if false_points else 0
-                split_score = true_score + false_score
+                true_means = [np.mean(true_labels)] * len(true_points)
+                false_means = [np.mean(false_labels)] * len(false_points)
+
+                true_score = mean_squared_error(true_means, true_labels)*len(true_points)
+                false_score = mean_squared_error(false_means, false_labels)*len(false_points)
+                split_score = (true_score + false_score)/num_points
                 # if split is better (lower), save its score, left/right split, etc
                 if best_split_score is None or split_score < best_split_score:
                     best_split_score = split_score
@@ -229,7 +249,6 @@ class RandomTree:
                     best_false_points = false_points
                     best_true_labels = true_labels
                     best_false_labels = false_labels
-
         split_data = {'true_points': best_true_points, 'true_labels': best_true_labels,
                       'false_labels': best_false_labels, 'false_points': best_false_points,
                       'best_attr': best_attr, 'best_val': best_val}
@@ -241,7 +260,7 @@ class RandomTree:
         :param point: dictionary of attributes and their corresponding values
         :return: float
         """
-        if self.num_samples <= 5:
+        if self.prediction_val is not None:
             return self.prediction_val
         else:
             if self.attribute in point:
@@ -292,7 +311,7 @@ if __name__ == '__main__':
     # print(regressor.bootstrap(points, labels, 4))
     # regressor.build_forest(points, labels)
 
-    dataset = load_data_frame('data_frames/petrol_df.pkl')
+    dataset = load_data_frame('data_frames/petrol_df.pkl').sample(frac=1)
     y = dataset.iloc[:, 4].values
     dataset.drop(dataset.columns[4], axis=1, inplace=True)
     X = dataset.to_dict('records')
@@ -304,14 +323,13 @@ if __name__ == '__main__':
     y_train = y[:train_sz]
     X_test = X[train_sz:]
     y_test = y[train_sz:]
-    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, random_state=0)
 
     # train
-    regressor = RandomForestRegressor(200, 4)
+    regressor = RandomForestRegressor(20, 4)
     regressor.build_forest(X_train, y_train)
     y_pred = regressor.predict(X_test)
 
-    # evaluate algo peformance
+    #evaluate algo peformance
     print('Mean Abs Error', metrics.mean_absolute_error(y_test, y_pred))
     print('Mean Sq Error', metrics.mean_squared_error(y_test, y_pred))
     print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
