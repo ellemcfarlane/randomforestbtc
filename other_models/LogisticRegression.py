@@ -33,5 +33,6 @@ if __name__ == '__main__':
     clf = LogisticRegression(random_state=0, solver='lbfgs', multi_class='multinomial', max_iter=200).fit(X_train, y_train)
     accuracy = clf.score(X_test, y_test)
 
+    print(df.head())
     print(clf.predict(X[:20, :]))
     print(accuracy)

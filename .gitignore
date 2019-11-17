@@ -1,0 +1,7 @@
+# Ignore the following:
+
+petrol_output
+petrol.pkl
+petrol_consumption.csv
+test.py
+random_tree_btc.py
