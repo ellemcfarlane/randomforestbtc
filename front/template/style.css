@@ -1,0 +1,76 @@
+body {
+    padding: 0px;
+    margin: 0px;
+    overflow-x: hidden;
+    background-color: #EFEFEF;
+    font-family: 'Work Sans', sans-serif;
+}
+
+nav {
+    background-color: black;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    width: 100%
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 30px;
+}
+
+nav a:hover {
+    background-color: #1e1e1e; 
+}
+
+main {
+    display: flex;
+    width: 90%;
+    margin: auto;
+    background-color: white;
+    padding: 30px;
+}
+
+main canvas {
+    flex-grow: 2;
+    padding: 10px;
+    border: 1px solid black;
+}
+main div {
+    flex-shrink: 1;
+    padding: 15px;
+}
+
+main div .prediction {
+    margin: 15px;
+    font-size: 200%;
+    border-radius: 10px;
+}
+
+.prediction span {
+    font-size: 50%;
+}
+
+.prediction p {
+    margin: 10px;
+}
+
+.prediction h2 {
+    margin: 10px;
+}
+
+.bad {
+    background-color: #FF4141;
+}
+
+.bad:hover {
+    background-color: #FF8181
+}
+
+.good {
+    background-color: #41FF6F;
+}
+
+.good:hover {
+    background-color: #81FFA8;
+}
