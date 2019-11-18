@@ -10,7 +10,7 @@ from pickle_dataset import load_data_frame
 # questions: max recursion depth sometimes reached for 200; not sure how many samples per leaf; can a leaf have
 # no samples? hmm hm; should we shuffle before split; should we set seed? but -> non-random trees
 # bc. how can we compare error rate as adjust hyper parameters
-#WHY is points ever passed as None
+# WHY is points ever passed as None
 # how do we deal with the random variation in MSE for predictions...?
 # kind of slow esp. c.f. pre-built model
 
@@ -162,6 +162,11 @@ class RandomTree:
         subset_attrs = self.random_subset(all_attributes, sample_attr_size)
         # divide samples into two groups via best split (best attribute-value combo)
         split_data = self.split_by_best_feature(subset_attrs, points, labels, possible_vals)
+        # if no split_data, make current node a leaf
+        if not split_data:
+            self.prediction_val = np.mean(labels) if labels else 0
+            self.num_samples = num_samples
+            return
         # average classification values
         #self.prediction_val = np.mean(labels)
         # node now knows how many samples it holds, etc
@@ -252,7 +257,7 @@ class RandomTree:
         split_data = {'true_points': best_true_points, 'true_labels': best_true_labels,
                       'false_labels': best_false_labels, 'false_points': best_false_points,
                       'best_attr': best_attr, 'best_val': best_val}
-        return split_data
+        return split_data if best_split_score else None
 
     def predict(self, point):
         """
@@ -325,7 +330,7 @@ if __name__ == '__main__':
     y_test = y[train_sz:]
 
     # train
-    regressor = RandomForestRegressor(20, 4)
+    regressor = RandomForestRegressor(200, 4)
     regressor.build_forest(X_train, y_train)
     y_pred = regressor.predict(X_test)
 

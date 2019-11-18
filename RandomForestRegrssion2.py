@@ -138,7 +138,7 @@ class Node:
 
 if __name__ == '__main__':
     # df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
-    df = pd.read_csv('df_final.csv', parse_dates=['Date'], low_memory=False)
+    df = pd.read_csv('raw_csvs/df_final.csv', parse_dates=['Date'], low_memory=False)
     df.drop(['Date'], 1, inplace=True)
 
     p = get_labels(read_df(df), 'Price')[0]
