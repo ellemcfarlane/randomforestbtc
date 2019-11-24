@@ -17,9 +17,6 @@ def process_data(points, label):
     return points, labels
 
 
-################################
-
-
 def split_by_value(points, labels, split_feature, split_value):
     true_points = []
     true_labels = []
@@ -117,7 +114,6 @@ class Node:
         self.false_child.build_tree()
         self.true_child.build_tree()
 
-<<<<<<< HEAD
     def classify(self, new_point):
         if self.attribute is None:
             return self.value
@@ -125,31 +121,6 @@ class Node:
             return self.true_child.classify(new_point)
         else:
             return self.false_child.classify(new_point)
-=======
-
-if __name__ == '__main__':
-    # df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
-    df = pd.read_csv('raw_csvs/df_final.csv', parse_dates=['Date'], low_memory=False)
-    df.drop(['Date'], 1, inplace=True)
-
-    p = get_labels(read_df(df), 'Price')[0]
-    l = get_labels(read_df(df), 'Price')[1]
-
-    n = Node(p, l)
-    n.build_tree()
-    leaf_values(n)
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> 4428448d30c6b2cc24bb9bafa7c5928873f59378
 
 
 def subset_dataset(points, labels, n):
