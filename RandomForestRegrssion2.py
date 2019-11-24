@@ -4,38 +4,18 @@ from sklearn import metrics
 import math
 
 
-def read_df(df):
+def df_to_dict(df):
     points = df.to_dict('records')
     return points
 
 
-def get_labels(points, label):
+def process_data(points, label):
     labels = []
-    for p in points:
+    for p in points.copy():
         labels.append(p[label])
         del p[label]
     return points, labels
 
-
-def bootstrap(points):
-    output = []
-    for i in range(len(points)):
-        r = random.randint(0, len(points)-1)
-        output.append(points[r])
-    return output
-
-
-def subset_features(points, n):
-    output = []
-    features = list(points[0].keys())
-    if n > len(features):
-        n = len(features)
-
-    for i in range(n):
-        r = random.randint(0, len(features)-1)
-        output.append(features[r])
-        del features[r]
-    return output
 
 ################################
 
@@ -72,9 +52,9 @@ def best_split(points, labels):
         for key, val in points[i].items():
             split = split_by_value(points, labels, key, val)
             if len(split[1]) == 0:
-                return None
+                continue
             if len(split[3]) == 0:
-                return None
+                continue
             true_mean = sum(split[1])/len(split[1])
             false_mean = sum(split[3])/len(split[3])
             true_mean_arr = []
@@ -99,7 +79,9 @@ def best_split(points, labels):
 
 def leaf_values(node):
     if node.attribute is None:
-        print(node.value)
+        print(node.points)
+        print(node.labels)
+        print()
     else:
         leaf_values(node.false_child)
         leaf_values(node.true_child)
@@ -122,43 +104,72 @@ class Node:
         self.true_child = None
 
     def build_tree(self):
-        if self.length <= 20:
+        if self.length <= 1:
             return
         best_split_val = best_split(self.points, self.labels)
         if best_split_val is None:
             return
         split = split_by_value(self.points, self.labels, best_split_val[0], best_split_val[1])
 
-        self.attribute = best_split_val[0]
+        self.attribute = best_split_val[0], best_split_val[1]
         self.false_child = Node(split[2], split[3])
         self.true_child = Node(split[0], split[1])
         self.false_child.build_tree()
         self.true_child.build_tree()
 
+    def classify(self, new_point):
+        if self.attribute is None:
+            return self.value
+        if new_point[self.attribute[0]] <= self.attribute[1]:
+            return self.true_child.classify(new_point)
+        else:
+            return self.false_child.classify(new_point)
+
+
+def subset_dataset(points, labels, n):
+    sub_points = []
+    sub_labels = []
+    for i in range(n):
+        r = random.randint(0, n)
+        sub_points.append(points[r])
+        sub_labels.append(labels[r])
+    return sub_points, sub_labels
+
+
+class RandomForestRegressor:
+    def __init__(self, points, labels, n_trees, subset_portion):
+        self.forest = []
+        for i in range(n_trees):
+            n = int(len(points) * subset_portion)
+            subset_data = subset_dataset(points, labels, n)
+            sub_points = subset_data[0]
+            sub_labels = subset_data[1]
+            node = Node(sub_points, sub_labels)
+            node.build_tree()
+            self.forest.append(node)
+
+    def predict(self, new_data):
+        tree_vals = []
+        for tree in self.forest:
+            tree_vals.append(tree.classify(new_data))
+        return sum(tree_vals)/len(tree_vals)
+
 
 if __name__ == '__main__':
-    # df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
-    df = pd.read_csv('df_final.csv', parse_dates=['Date'], low_memory=False)
-    df.drop(['Date'], 1, inplace=True)
+    df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
+    read = df_to_dict(df)
+    proc = process_data(read, 'Petrol_Consumption')
+    points = proc[0]
+    labels = proc[1]
 
-    p = get_labels(read_df(df), 'Price')[0]
-    l = get_labels(read_df(df), 'Price')[1]
+    # n = Node(points, labels)
+    # n.build_tree()
+    # leaf_values(n)
 
-    n = Node(p, l)
-    n.build_tree()
-    leaf_values(n)
+    test_data = {'Petrol_tax': 9,
+                 'Average_income': 3500,
+                 'Paved_Highways': 2000,
+                 'Population_Driver_licence(%)': .53}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    rf = RandomForestRegressor(points, labels, 30, 0.3)
+    print(rf.predict(test_data))
