@@ -1,7 +1,8 @@
 import pandas as pd
 import random
-from sklearn import metrics
+import numpy as np
 import math
+from sklearn import metrics
 
 
 def df_to_dict(df):
@@ -9,7 +10,7 @@ def df_to_dict(df):
     return points
 
 
-def process_data(points, label):
+def split_by_label(points, label):
     labels = []
     for p in points.copy():
         labels.append(p[label])
@@ -136,6 +137,7 @@ def subset_dataset(points, labels, n):
 class RandomForestRegressor:
     def __init__(self, points, labels, n_trees, subset_portion):
         self.forest = []
+        self.tree_values = None
         for i in range(n_trees):
             n = int(len(points) * subset_portion)
             subset_data = subset_dataset(points, labels, n)
@@ -149,24 +151,30 @@ class RandomForestRegressor:
         tree_vals = []
         for tree in self.forest:
             tree_vals.append(tree.classify(new_data))
+        self.tree_values = tree_vals
         return sum(tree_vals)/len(tree_vals)
+
+    def predict_test_set(self, x_test):
+        predictions = []
+        for point in x_test:
+            pred = self.predict(point)
+            predictions.append(pred)
+        return predictions
 
 
 if __name__ == '__main__':
     df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
     read = df_to_dict(df)
-    proc = process_data(read, 'Petrol_Consumption')
-    points = proc[0]
-    labels = proc[1]
+    train = read[:40]
+    test = read[40:]
 
-    # n = Node(points, labels)
-    # n.build_tree()
-    # leaf_values(n)
+    train_split = split_by_label(train, 'Petrol_Consumption')
+    x_train = train_split[0]
+    y_train = train_split[1]
 
-    test_data = {'Petrol_tax': 9,
-                 'Average_income': 3500,
-                 'Paved_Highways': 2000,
-                 'Population_Driver_licence(%)': .53}
-
-    rf = RandomForestRegressor(points, labels, 30, 0.3)
-    print(rf.predict(test_data))
+    rf = RandomForestRegressor(x_train, y_train, 30, 0.3)
+    test_split = split_by_label(test, 'Petrol_Consumption')
+    x_test = test_split[0]
+    y_test = test_split[1]
+    predictions = rf.predict_test_set(x_test)
+    print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, predictions)))
