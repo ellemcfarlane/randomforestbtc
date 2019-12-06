@@ -16,7 +16,7 @@ if __name__ == '__main__':
     txn_vol = pd.read_csv('features/estimated-transaction-volume.csv')
     hash_rate = pd.read_csv('features/hash-rate-2.csv')
     market_cap = pd.read_csv('features/market-cap-2.csv')
-    market_price = pd.read_csv('features/market-price-3.csv')
+    market_price = pd.read_csv('features/market-price.csv')
     confirm_time = pd.read_csv('features/median-confirmation-time-2.csv')
     miners_revenue = pd.read_csv('features/miners-revenue.csv')
     n_transaction = pd.read_csv('features/n-transactions.csv')
@@ -30,17 +30,15 @@ if __name__ == '__main__':
     txn_fees = pd.read_csv('features/transaction-fees-2.csv')
 
     df_names = [
-        'avg_block_size', 'blocks_size', 'cost_per_txn', 'difficulty', 'txn_vol', 'hash_rate', 'market_cap',
-        'market_price', 'confirm_time', 'miners_revenue', 'n_transaction', 'n_transaction_exclude_long',
-        'n_transaction_exclude_popular', 'txn_per_block', 'unique_addresses', 'output_vol', 'total_bitcoins',
-        'trade_volume', 'txn_fees'
+        'market_price', 'avg_block_size', 'blocks_size', 'cost_per_txn', 'difficulty', 'txn_vol', 'hash_rate',
+        'market_cap', 'confirm_time', 'miners_revenue', 'n_transaction','n_transaction_exclude_popular',
+        'txn_per_block', 'output_vol', 'total_bitcoins', 'trade_volume', 'txn_fees'
     ]
 
     dataframes = [
-        avg_block_size, blocks_size, cost_per_txn, difficulty, txn_vol, hash_rate, market_cap,
-        market_price, confirm_time, miners_revenue, n_transaction, n_transaction_exclude_long,
-        n_transaction_exclude_popular, txn_per_block, unique_addresses, output_vol, total_bitcoins,
-        trade_volume, txn_fees
+        market_price, avg_block_size, blocks_size, cost_per_txn, difficulty, txn_vol, hash_rate,
+        market_cap, confirm_time, miners_revenue, n_transaction, n_transaction_exclude_popular,
+        txn_per_block, output_vol, total_bitcoins, trade_volume, txn_fees
     ]
 
     for i in range(len(df_names)):
@@ -48,6 +46,3 @@ if __name__ == '__main__':
 
     df_final = reduce(lambda left, right: pd.merge(left, right, on='date'), dataframes)
     df_final.to_csv('bitcoin_final.csv')
-
-
-
