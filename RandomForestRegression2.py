@@ -163,18 +163,66 @@ class RandomForestRegressor:
 
 
 if __name__ == '__main__':
-    df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
-    read = df_to_dict(df)
-    train = read[:40]
-    test = read[40:]
+    # df = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False)
+    # read = df_to_dict(df)
+    # train = read[:38]
+    # test = read[38:]
+    #
+    # train_split = split_by_label(train, 'Petrol_Consumption')
+    # x_train = train_split[0]
+    # y_train = train_split[1]
+    #
+    # rf = RandomForestRegressor(x_train, y_train, 200, .8)
+    # test_split = split_by_label(test, 'Petrol_Consumption')
+    # x_test = test_split[0]
+    # y_test = test_split[1]
+    # predictions = rf.predict_test_set(x_test)
+    # print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, predictions)))
 
-    train_split = split_by_label(train, 'Petrol_Consumption')
+#############################################################################
+
+    # old data
+
+    df = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
+    df.drop(['Date'], 1, inplace=True)
+    read = df_to_dict(df)
+
+    training_size = 950
+    train = read[:training_size]
+    test = read[training_size:]
+
+    train_split = split_by_label(train, 'Price')
     x_train = train_split[0]
     y_train = train_split[1]
 
-    rf = RandomForestRegressor(x_train, y_train, 30, 0.3)
-    test_split = split_by_label(test, 'Petrol_Consumption')
+    rf = RandomForestRegressor(x_train, y_train, 20, .99)
+    test_split = split_by_label(test, 'Price')
     x_test = test_split[0]
     y_test = test_split[1]
     predictions = rf.predict_test_set(x_test)
+    print(predictions[:-10])
     print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, predictions)))
+
+#############################################################################
+
+    # new data
+
+    # df = pd.read_csv('raw_csvs/bitcoin_final.csv', low_memory=True)
+    # df.drop(['date'], 1, inplace=True)
+    # read = df_to_dict(df)
+    #
+    # training_size = 950
+    # train = read[:training_size]
+    # test = read[training_size:]
+    #
+    # train_split = split_by_label(train, 'market_price')
+    # x_train = train_split[0]
+    # y_train = train_split[1]
+    #
+    # rf = RandomForestRegressor(x_train, y_train, 20, .99)
+    # test_split = split_by_label(test, 'market_price')
+    # x_test = test_split[0]
+    # y_test = test_split[1]
+    # predictions = rf.predict_test_set(x_test)
+    # print(predictions[:-10])
+    # print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, predictions)))
