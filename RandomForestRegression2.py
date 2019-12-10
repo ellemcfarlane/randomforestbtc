@@ -139,6 +139,7 @@ class RandomForestRegressor:
         self.forest = []
         self.tree_values = None
         for i in range(n_trees):
+            print(i)
             n = int(len(points) * subset_portion)
             subset_data = subset_dataset(points, labels, n)
             sub_points = subset_data[0]

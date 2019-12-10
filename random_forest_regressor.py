@@ -4,6 +4,8 @@ from sklearn import metrics
 from sklearn.metrics import mean_squared_error
 from collections import defaultdict
 from pickle_dataset import load_data_frame
+import multiprocessing as mp
+import line_profiler
 
 # problems: gets attributes via list(points[0].keys), but each points may not have all attributes
 
@@ -32,10 +34,10 @@ class RandomForestRegressor:
         self.num_estimators = num_estimators
         self.pool_num_attributes = pool_num_attributes
         # create untrained forest
-        self.trees = [RandomTree() for num in range(num_estimators)]
+        self.trees = [RandomTree() for _ in range(num_estimators)]
         # set to True after all trees in forest are trained
         self.all_trained = False
-
+    #@profile
     def build_forest(self, points, labels):
         """
         Builds a random forest trained on the given points with their respective classification labels.
@@ -51,15 +53,41 @@ class RandomForestRegressor:
             raise Exception('Length of points must be non-zero and equal to length of labels.'
                             'Points length is {}, labels length is {}'.format(len_points, len_labels))
         # sample size for bootstrapping
-        sample_size = len_points  #int(np.sqrt(len_points))
+        sample_size = len_points
         # all categories for each point
         attributes = list(points[0].keys())
-        # get range of values for attributes
-        possible_vals = self.possible_attr_vals(points, attributes)
-        # train each tree in forest with random bootstrap sample of size sample_size
-        for tree in self.trees:
+        bs_points = []
+        bs_labels = []
+        bs_vals = []
+        for _ in self.trees:
             bootstrap_points, bootstrap_labels = self.bootstrap(points, labels, sample_size)
-            tree.train(bootstrap_points, bootstrap_labels, possible_vals, self.pool_num_attributes)
+            bs_points.append(bootstrap_points)
+            bs_labels.append(bootstrap_labels)
+            bs_vals.append(self.possible_attr_vals(bootstrap_points, attributes))
+        # train each tree in forest with random bootstrap sample of size sample_size
+        #count = 0
+        # create multi-processing workers
+        workers = mp.Pool(mp.cpu_count())
+        task_results = []
+        for tree, bootstrap_points, bootstrap_labels, possible_vals in zip(self.trees, bs_points, bs_labels, bs_vals):
+            #bootstrap_points, bootstrap_labels = self.bootstrap(points, labels, sample_size)
+            # get range of values for attributes
+            #possible_vals = self.possible_attr_vals(bootstrap_points, attributes)
+            #tree.train(bootstrap_points, bootstrap_labels, possible_vals, self.pool_num_attributes)
+            task_results.append(workers.apply_async(RandomTree.train, (tree, bootstrap_points, bootstrap_labels, possible_vals, self.pool_num_attributes)))
+            # count += 1
+            # print(count)
+        # get results
+        new_trees = []
+        count = 0
+        for result in task_results:
+            new_trees.append(result.get())
+            print("tree", count)
+            count += 1
+        self.trees = new_trees
+        # close pool of workers
+        workers.close()
+
         self.all_trained = True
 
     def predict(self, points):
@@ -183,6 +211,7 @@ class RandomTree:
         self.true_child.train(true_points, true_labels, possible_vals, sample_attr_size)
         self.false_child = RandomTree()
         self.false_child.train(false_points, false_labels, possible_vals, sample_attr_size)
+        return self
 
     def random_subset(self, attributes, sample_size):
         """
@@ -316,9 +345,17 @@ if __name__ == '__main__':
     # print(regressor.bootstrap(points, labels, 4))
     # regressor.build_forest(points, labels)
 
-    dataset = load_data_frame('data_frames/petrol_df.pkl').sample(frac=1)
-    y = dataset.iloc[:, 4].values
-    dataset.drop(dataset.columns[4], axis=1, inplace=True)
+    dataset = load_data_frame('data_frames/old_btc_df.pkl')
+    dataset['Price'] = dataset['Price'].shift(3)
+    dataset.drop(0, axis=0, inplace=True)
+    dataset.drop(1, axis=0, inplace=True)
+    dataset.drop(2, axis=0, inplace=True)
+    #dataset = dataset.sample(frac=1)
+    y = dataset.iloc[:, 16].values
+    dataset.drop(columns=['Price'], inplace=True)
+    # print(dataset.head())
+    # print(dataset.tail())
+    #dataset = dataset[['Unique Addresses', 'Difficulty', 'Total Bitcoin']]
     X = dataset.to_dict('records')
 
     # split into training vs test attributes/labels
@@ -330,8 +367,10 @@ if __name__ == '__main__':
     y_test = y[train_sz:]
 
     # train
-    regressor = RandomForestRegressor(200, 4)
+    # 20 trees, uses all 17 features for best split and n points for subsampling
+    regressor = RandomForestRegressor(20, 17)
     regressor.build_forest(X_train, y_train)
+    print(regressor.trees[0].true_child)
     y_pred = regressor.predict(X_test)
 
     #evaluate algo peformance

@@ -12,7 +12,7 @@ def save_pickle(obj, path):
         pickle.dump(obj, file)
 
 pickle_frame('raw_csvs/petrol_consumption.csv', 'data_frames/petrol_df.pkl')
-# pickle_frame('df_final.csv', 'btc_df.pkl')
+# pickle_frame('df_final.csv', 'old_btc_df.pkl')
 
 def load_data_frame(path):
     with open(path, 'rb') as file:
@@ -20,7 +20,7 @@ def load_data_frame(path):
 
 # dataset = load_data_frame('data_frames/petrol_df.pkl').to_dict('records')
 # save_pickle(dataset, 'points/petrol_points.pkl')
-# dataset = load_data_frame('btc_df.pkl')
+# dataset = load_data_frame('old_btc_df.pkl')
 # # print(dataset.head())
 #
 # dict_list = dataset.to_dict('records')
