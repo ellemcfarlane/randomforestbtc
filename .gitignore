@@ -1,1 +1,9 @@
 # Ignore the following:
+kaggle_RF.py
+hyperparams.py
+faster_for.py
+Bitcoin_CSV_Maker.py
+*.py.lprof
+points
+line_profiler
+data_frames
