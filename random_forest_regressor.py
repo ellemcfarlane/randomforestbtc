@@ -64,26 +64,23 @@ class RandomForestRegressor:
             bs_points.append(bootstrap_points)
             bs_labels.append(bootstrap_labels)
             self.random_state += 1
-        # train each tree in forest with random bootstrap sample of size sample_size
-        # count = 0
         # create multi-processing workers
         workers = mp.Pool(mp.cpu_count())
         task_results = []
         for tree, bootstrap_points, bootstrap_labels in zip(self.trees, bs_points, bs_labels):
-            #bootstrap_points, bootstrap_labels = self.bootstrap(points, labels, sample_size)
-            # get range of values for attributes
-            #tree.train(bootstrap_points, bootstrap_labels, self.pool_num_attributes, attributes)
-            task_results.append(workers.apply_async(RandomTree.train, (tree, bootstrap_points, bootstrap_labels, num_subset_attributes, attributes)))
-            # count += 1
-            # print(count)
-        # get results
+            # train each tree in forest with random bootstrap sample
+            task_results.append(workers.apply_async(RandomTree.train, (tree, bootstrap_points, bootstrap_labels,
+                                                     num_subset_attributes, attributes)))
+        # get trees
         new_trees = []
         count = 0
         for result in task_results:
             new_trees.append(result.get())
             print(count)
             count += 1
+        # set new trees to RF Regressor
         self.trees = new_trees
+
         # close pool of workers
         workers.close()
 
@@ -150,14 +147,12 @@ class RandomTree:
         # only set if node is leaf
         self.prediction_val = None
 
-    #@profile
     def train(self, points, labels, sample_attr_size, all_attributes):
         """
         trains the tree node on the given points.
         :param points: list of dictionaries where the key in each dictionary
             is an attribute category for the points.
         :param labels: list of classifications (floats, booleans, etc) for each point
-        :param possible_vals: dictionary
         :param sample_attr_size: int, number of random attributes to consider for each node
         :return: dictionary where attribute category maps to set of possible values for that attribute
         """
@@ -202,7 +197,7 @@ class RandomTree:
         :param sample_size: int specifying number of times to sample from attributes
         :return: list of possible categories
         """
-        #seed(99)
+        random.seed(99)
         num_attributes = len(attributes)
         if sample_size > num_attributes:
             raise Exception("Sample size ({}) cannot exceed number of attributes ({}).".format(sample_size, num_attributes))
