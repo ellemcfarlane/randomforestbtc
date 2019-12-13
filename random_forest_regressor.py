@@ -1,9 +1,7 @@
 import random
 import numpy as np
 from sklearn import metrics
-from collections import defaultdict
 import multiprocessing as mp
-import line_profiler
 import pickle
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -25,7 +23,7 @@ class RandomForestRegressor:
         self.all_trained = False
 
         self.random_state = 0
-    #@profile
+
     def build_forest(self, points, labels, num_subset_points="all", num_subset_attributes="all"):
         """
         Builds a random forest trained on the given points with their respective classification labels.
