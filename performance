@@ -1,6 +1,5 @@
 20 trees
 our model, old BTC:
-Performance
 Average Error: $18.9690.
 Accuracy = 95.05%.
 
@@ -13,7 +12,6 @@ Mean Abs Error 16.999213930395914
 Mean Sq Error 1159.6885498222102
 Root Mean Sq Error 34.05420017886502
 
-Performance
 Average Error: $16.9992.
 Accuracy = 95.60%.
 
@@ -21,8 +19,15 @@ Mean Abs Error 16.999213930395914
 Mean Sq Error 1159.6885498222102
 Root Mean Sq Error 34.05420017886502
 
+Our model, new BTC
+Average Error: $145.1960.
+Accuracy = 73.83%.
+
+Mean Abs Error 145.19603624994795
+Mean Sq Error 157384.02437178054
+Root Mean Sq Error 396.7165541942768
+
 pre-build model, new BTC:
-Performance
 Average Error: $118.6307.
 Accuracy = 75.21%.
 

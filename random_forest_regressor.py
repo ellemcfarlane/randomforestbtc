@@ -298,35 +298,34 @@ if __name__ == '__main__':
 
     # Old BTC
 
-    dataset = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
-    dataset['Price'] = dataset['Price'].shift(3)
-    dataset.drop(0, axis=0, inplace=True)
-    dataset.drop(1, axis=0, inplace=True)
-    dataset.drop(2, axis=0, inplace=True)
-    y_orig = dataset.loc[:, 'Price'].values[::-1]
-    X_orig = dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'])\
-        .reindex(index=dataset.index[::-1]).to_dict('records')
-    dataset = dataset.sample(frac=1, random_state=0)
-
-    y = dataset.loc[:, 'Price'].values
-    dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'], inplace=True)
-    print(dataset.head())
+    # dataset = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
+    # dataset['Price'] = dataset['Price'].shift(3)
+    # dataset.drop(0, axis=0, inplace=True)
+    # dataset.drop(1, axis=0, inplace=True)
+    # dataset.drop(2, axis=0, inplace=True)
+    # y_orig = dataset.loc[:, 'Price'].values[::-1]
+    # X_orig = dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'])\
+    #     .reindex(index=dataset.index[::-1]).to_dict('records')
+    # dataset = dataset.sample(frac=1, random_state=0)
+    #
+    # y = dataset.loc[:, 'Price'].values
+    # dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'], inplace=True)
+    # print(dataset.head())
 
     #############################################################################
 
     # New BTC
 
-    # dataset = pd.read_csv('raw_csvs/bitcoin_final.csv', low_memory=True)
-    # dataset['market_price'] = dataset['market_price'].shift(-1)
-    # dataset.drop(len(dataset) - 1, axis=0, inplace=True)
-    # y_orig = dataset.loc[:, 'market_price'].values[::-1]
-    # X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'])\
-    #     .reindex(index=dataset.index[::-1]).to_dict('records')
-    # print(dataset.head())
-    # dataset = dataset.sample(frac=1, random_state=0)
-    # y = dataset.loc[:, 'market_price'].values
-    # dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'], inplace=True)
-    # print(dataset.head())
+    dataset = pd.read_csv('raw_csvs/bitcoin_final.csv', low_memory=True)
+    dataset['market_price'] = dataset['market_price'].shift(-1)
+    dataset.drop(len(dataset) - 1, axis=0, inplace=True)
+    y_orig = dataset.loc[:, 'market_price'].values[::-1]
+    X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'])\
+        .reindex(index=dataset.index[::-1]).to_dict('records')
+    dataset = dataset.sample(frac=1, random_state=0)
+    y = dataset.loc[:, 'market_price'].values
+    dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'], inplace=True)
+    print(dataset.head())
 
     #############################################################################
 
@@ -341,30 +340,29 @@ if __name__ == '__main__':
     y_train = y[:train_sz]
     X_test = X[train_sz:]
     y_test = y[train_sz:]
-    print("train", y_train[:10])
 
     # train
     #20 trees, uses all features for best split and n points for subsampling
-    # regressor = RandomForestRegressor(1)
-    # regressor.build_forest(X_train, y_train)
+    regressor = RandomForestRegressor(20)
+    regressor.build_forest(X_train, y_train)
 
-    # with open('final_forest_2.pkl', 'wb') as file:
-    #     pickle.dump(regressor, file)
-    #
-    with open('final_forest.pkl', 'rb') as file:
-        regressor = pickle.load(file)
+    with open('final_forest.pkl', 'wb') as file:
+        pickle.dump(regressor, file)
+
+    # with open('old_btc_forest.pkl', 'rb') as file:
+    #     regressor = pickle.load(file)
 
     y_pred = regressor.predict(X_test)
     y_train_pred = regressor.predict(X_train)
     y_full = regressor.predict(X_orig)
 
     print("y-pred", y_pred[-10:])
-    print("x", X_orig[:1])
 
     #############################################################################
 
     # Evaluate algo performance
 
+    y_test[y_test == 0] = .0001
     errors = abs(y_pred - y_test)
     map = 100 * np.mean(errors / y_test)
     accuracy = 100 - map
@@ -397,6 +395,5 @@ if __name__ == '__main__':
     axs[2].set_xlabel('Relative dates from 2012-2016')
 
     plt.show()
-    print("random end state", regressor.random_state)
 
 

@@ -56,7 +56,7 @@ y_train_pred = regressor.predict(X_train)
 y_full = regressor.predict(X_orig)
 
 
-# with open('final_forest.pkl', 'wb') as file:
+# with open('old_btc_forest.pkl', 'wb') as file:
 #     pickle.dump(regressor, file)
 
 
