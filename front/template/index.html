@@ -13,9 +13,14 @@
         <main>
             <canvas id="mainchart"></canvas>
             <div>
-                <div class="prediction good"><p>Today:</p> <h2>UP</h2> <span>+99.0000%</span></div>
-                <div class="prediction bad"><p>Tommorow:</p> <h2>DOWN</h2> <span>-99.0000%</span></div>
-                <div class="prediction good"><p>After:</p> <h2>UP</h2> <span>+99.0000%</span></div>
+                <div class="prediction good"><h2 id="pred">UP</h2> <span>Daily prediction</span></div>
+                <script>
+                    fetch("predict").then(function(val){
+                        val.text().then(function(data) {
+                            document.getElementById("pred").innerHTML = data;
+                        }); 
+                    });
+                </script>
             </div>
         </main>
     </body>
