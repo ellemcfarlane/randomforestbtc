@@ -316,15 +316,14 @@ if __name__ == '__main__':
 
     # New BTC
 
-    dataset = pd.read_csv('raw_csvs/bitcoin_final.csv', low_memory=True)
+    dataset = pd.read_csv('raw_csvs/bitcoin_truncated.csv', low_memory=True)
     dataset['market_price'] = dataset['market_price'].shift(-1)
     dataset.drop(len(dataset) - 1, axis=0, inplace=True)
-    y_orig = dataset.loc[:, 'market_price'].values[::-1]
-    X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'])\
-        .reindex(index=dataset.index[::-1]).to_dict('records')
+    y_orig = dataset.loc[:, 'market_price'].values
+    X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1']).to_dict('records')
     dataset = dataset.sample(frac=1, random_state=0)
     y = dataset.loc[:, 'market_price'].values
-    dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'], inplace=True)
+    dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
     print(dataset.head())
 
     #############################################################################
@@ -343,7 +342,7 @@ if __name__ == '__main__':
 
     # train
     #20 trees, uses all features for best split and n points for subsampling
-    regressor = RandomForestRegressor(20)
+    regressor = RandomForestRegressor(1)
     regressor.build_forest(X_train, y_train)
 
     with open('final_forest_drop0.pkl', 'wb') as file:
@@ -362,7 +361,6 @@ if __name__ == '__main__':
 
     # Evaluate algo performance
 
-    y_test[y_test == 0] = .0001
     errors = abs(y_pred - y_test)
     map = 100 * np.mean(errors / y_test)
     accuracy = 100 - map

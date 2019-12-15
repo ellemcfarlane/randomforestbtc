@@ -34,12 +34,10 @@ dataset = pd.read_csv('../raw_csvs/bitcoin_truncated.csv', low_memory=True)
 dataset['market_price'] = dataset['market_price'].shift(-1)
 dataset.drop(len(dataset) - 1, axis=0, inplace=True)
 y_orig = dataset.loc[:, 'market_price'].values
-#X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1']).to_numpy()
 X_orig = dataset.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'date', 'market_price']).to_numpy()
 print(dataset.head())
 dataset = dataset.sample(frac=1, random_state=0)
 y = dataset.loc[:, 'market_price'].values
-#dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
 dataset.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'date', 'market_price'], inplace=True)
 print("HELLO", dataset)
 
