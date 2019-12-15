@@ -393,5 +393,3 @@ if __name__ == '__main__':
     axs[2].set_xlabel('Relative dates from 2012-2016')
 
     plt.show()
-
-
