@@ -7,7 +7,7 @@ Mean Abs Error 18.969046625843824
 Mean Sq Error 1439.5649136476097
 Root Mean Sq Error 37.94159872287421
 
-pre-build model, old BTC:
+pre-built model, old BTC:
 Mean Abs Error 16.999213930395914
 Mean Sq Error 1159.6885498222102
 Root Mean Sq Error 34.05420017886502
@@ -19,6 +19,9 @@ Mean Abs Error 16.999213930395914
 Mean Sq Error 1159.6885498222102
 Root Mean Sq Error 34.05420017886502
 
+#############################################################################
+20 Trees
+
 Our model, new BTC
 Average Error: $145.1960.
 Accuracy = 73.83%.
@@ -27,7 +30,7 @@ Mean Abs Error 145.19603624994795
 Mean Sq Error 157384.02437178054
 Root Mean Sq Error 396.7165541942768
 
-pre-build model, new BTC:
+pre-built model, new BTC:
 Average Error: $118.6307.
 Accuracy = 75.21%.
 

@@ -30,25 +30,25 @@ from sklearn.model_selection import RandomizedSearchCV
 
 # New BTC
 
-dataset = pd.read_csv('../raw_csvs/bitcoin_final.csv', low_memory=True)
+dataset = pd.read_csv('../raw_csvs/bitcoin_truncated.csv', low_memory=True)
 dataset['market_price'] = dataset['market_price'].shift(-1)
 dataset.drop(len(dataset) - 1, axis=0, inplace=True)
 y_orig = dataset.loc[:, 'market_price'].values
-#X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0']).to_numpy()
-X_orig = dataset.drop(columns=['Unnamed: 0', 'date', 'market_price', 'n_transaction_exclude_popular']).to_numpy()
+#X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1']).to_numpy()
+X_orig = dataset.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'date', 'market_price']).to_numpy()
 print(dataset.head())
 dataset = dataset.sample(frac=1, random_state=0)
 y = dataset.loc[:, 'market_price'].values
-#dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'], inplace=True)
-dataset.drop(columns=['Unnamed: 0', 'date', 'market_price', 'n_transaction_exclude_popular'], inplace=True)
-print(dataset.head())
+#dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
+dataset.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'date', 'market_price'], inplace=True)
+print("HELLO", dataset)
 
 
 X = dataset.to_numpy()
 # split into training vs test attributes/labels
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, shuffle=False)
 
-regressor = RandomForestRegressor(n_estimators=200, random_state=0)
+regressor = RandomForestRegressor(n_estimators=20, random_state=0)
 regressor.fit(X_train, y_train)
 #pprint(regressor.get_params())
 y_pred = regressor.predict(X_test)
@@ -61,7 +61,6 @@ y_full = regressor.predict(X_orig)
 
 
 # Evaluate algo performance
-y_test[y_test == 0] = .0001
 errors = abs(y_pred - y_test)
 mean = []
 map = 100 * np.mean(errors / y_test)

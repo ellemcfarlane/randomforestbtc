@@ -346,7 +346,7 @@ if __name__ == '__main__':
     regressor = RandomForestRegressor(20)
     regressor.build_forest(X_train, y_train)
 
-    with open('final_forest.pkl', 'wb') as file:
+    with open('final_forest_drop0.pkl', 'wb') as file:
         pickle.dump(regressor, file)
 
     # with open('old_btc_forest.pkl', 'rb') as file:
