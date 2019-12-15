@@ -35,11 +35,11 @@ dataset['market_price'] = dataset['market_price'].shift(-1)
 dataset.drop(len(dataset) - 1, axis=0, inplace=True)
 y_orig = dataset.loc[:, 'market_price'].values
 X_orig = dataset.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'date', 'market_price']).to_numpy()
-print(dataset.head())
 dataset = dataset.sample(frac=1, random_state=0)
 y = dataset.loc[:, 'market_price'].values
 dataset.drop(columns=['Unnamed: 0', 'Unnamed: 0.1', 'date', 'market_price'], inplace=True)
-print("HELLO", dataset)
+print("dataset preview:")
+print(dataset.head())
 
 
 X = dataset.to_numpy()
@@ -48,10 +48,11 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2, shuffle=
 
 regressor = RandomForestRegressor(n_estimators=20, random_state=0)
 regressor.fit(X_train, y_train)
-#pprint(regressor.get_params())
 y_pred = regressor.predict(X_test)
 y_train_pred = regressor.predict(X_train)
 y_full = regressor.predict(X_orig)
+
+print("y-pred", y_pred[-10:])
 
 
 # with open('old_btc_forest.pkl', 'wb') as file:
@@ -60,14 +61,11 @@ y_full = regressor.predict(X_orig)
 
 # Evaluate algo performance
 errors = abs(y_pred - y_test)
-mean = []
 map = 100 * np.mean(errors / y_test)
 accuracy = 100 - map
 
 print('Performance')
-print('Average Error: ${:0.4f}.'.format(np.mean(errors)))
 print('Accuracy = {:0.2f}%.'.format(accuracy))
-print()
 print('Mean Abs Error', metrics.mean_absolute_error(y_test, y_pred))
 print('Mean Sq Error', metrics.mean_squared_error(y_test, y_pred))
 print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))

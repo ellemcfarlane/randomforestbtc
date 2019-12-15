@@ -324,6 +324,7 @@ if __name__ == '__main__':
     dataset = dataset.sample(frac=1, random_state=0)
     y = dataset.loc[:, 'market_price'].values
     dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
+    print("dataset preview:")
     print(dataset.head())
 
     #############################################################################
@@ -342,14 +343,14 @@ if __name__ == '__main__':
 
     # train
     #20 trees, uses all features for best split and n points for subsampling
-    regressor = RandomForestRegressor(1)
-    regressor.build_forest(X_train, y_train)
+    # regressor = RandomForestRegressor(20)
+    # regressor.build_forest(X_train, y_train)
 
-    with open('final_forest_drop0.pkl', 'wb') as file:
-        pickle.dump(regressor, file)
+    # with open('final_forest_drop0.pkl', 'wb') as file:
+    #     pickle.dump(regressor, file)
 
-    # with open('old_btc_forest.pkl', 'rb') as file:
-    #     regressor = pickle.load(file)
+    with open('final_forest_drop0.pkl', 'rb') as file:
+        regressor = pickle.load(file)
 
     y_pred = regressor.predict(X_test)
     y_train_pred = regressor.predict(X_train)
@@ -366,9 +367,7 @@ if __name__ == '__main__':
     accuracy = 100 - map
 
     print('Performance')
-    print('Average Error: ${:0.4f}.'.format(np.mean(errors)))
     print('Accuracy = {:0.2f}%.'.format(accuracy))
-    print()
     print('Mean Abs Error', metrics.mean_absolute_error(y_test, y_pred))
     print('Mean Sq Error', metrics.mean_squared_error(y_test, y_pred))
     print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
@@ -388,8 +387,8 @@ if __name__ == '__main__':
     axs[1].scatter(x_test, y_test, c='black')
     axs[1].scatter(x_test, y_pred, c='red', marker=".")
 
-    axs[2].scatter(x_full, y_orig, c='black')
+    axs[2].plot(x_full, y_orig, c='black', linewidth=6)
     axs[2].plot(x_full, y_full, c='red')
-    axs[2].set_xlabel('Relative dates from 2012-2016')
+    axs[2].set_xlabel('Relative dates from 2010-2019')
 
     plt.show()
