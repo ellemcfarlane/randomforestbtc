@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>Main</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Work+Sans&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <nav>
+            <a href="main">Main</a>
+            <a href="manual">Manual Input</a>
+        </nav>
+        <main>
+            <form method="POST">
+                <input type="text" placeholder="market_price" name="market_price" id="0" />
+                <input type="text" placeholder="avg_block_size" name="avg_block_size" id="1" />
+                <input type="text" placeholder="blocks_size" name="blocks_size" id="2" />
+                <input type="text" placeholder="cost_per_txn" name="cost_per_txn" id="3" />
+                <input type="text" placeholder="difficulty" name="difficulty" id="4" />
+                <input type="text" placeholder="txn_vol" name="txn_vol" id="5" />
+                <input type="text" placeholder="hash_rate" name="hash_rate" id="6" />
+                <input type="text" placeholder="market_cap" name="market_cap" id="7" />
+                <input type="text" placeholder="confirm_time" name="confirm_time" id="8" />
+                <input type="text" placeholder="miners_revenue" name="miners_revenue" id="9" />
+                <input type="text" placeholder="n_transactions" name="n_transactions" id="10" />
+                <input type="text" placeholder="n_transctions_exclude_popular" name="n_transactions_exclude_popular" id="11" />
+                <input type="text" placeholder="txn_per_block" name="txn_per_block" id="12" />
+                <input type="text" placeholder="output_vol" name="output_vol" id="13" />
+                <input type="text" placeholder="total_bitcoins" name="total_bitcoins" id="14" />
+                <input type="text" placeholder="trade_volume" name="trade_volume" id="15" />
+                <input type="text" placeholder="txn_fees" name="txn_fees" id="16" />
+                <button>Predict</button>
+                <script>
+                    fetch("currentstats").then(function(val){
+                         val.json().then(function(data) {
+                             for (i = 0; i < 17; i++){
+                                document.getElementById(i).value = data[i]
+                             }
+                         });
+                     });
+                </script>
+            </form>
+        </main>
+    </body>
+</html>
