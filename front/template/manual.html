@@ -7,40 +7,82 @@
     </head>
     <body>
         <nav>
-            <a href="main">Main</a>
+            <a href="/">Main</a>
             <a href="manual">Manual Input</a>
         </nav>
         <main>
-            <form method="POST">
-                <input type="text" placeholder="market_price" name="market_price" id="market_price" />
-                <input type="text" placeholder="avg_block_size" name="avg_block_size" id="avg_block_size" />
-                <input type="text" placeholder="blocks_size" name="blocks_size" id="blocks_size" />
-                <input type="text" placeholder="cost_per_txn" name="cost_per_txn" id="cost_per_txn" />
-                <input type="text" placeholder="difficulty" name="difficulty" id="difficulty" />
-                <input type="text" placeholder="txn_vol" name="txn_vol" id="txn_vol" />
-                <input type="text" placeholder="hash_rate" name="hash_rate" id="hash_rate" />
-                <input type="text" placeholder="market_cap" name="market_cap" id="market_cap" />
-                <input type="text" placeholder="confirm_time" name="confirm_time" id="confirm_time" />
-                <input type="text" placeholder="miners_revenue" name="miners_revenue" id="miners_revenue" />
-                <input type="text" placeholder="n_transaction" name="n_transaction" id="n_transaction" />
-                <input type="text" placeholder="n_transction_exclude_popular" name="n_transaction_exclude_popular" id="n_transaction_exclude_popular" />
-                <input type="text" placeholder="txn_per_block" name="txn_per_block" id="txn_per_block" />
-                <input type="text" placeholder="output_vol" name="output_vol" id="output_vol" />
-                <input type="text" placeholder="total_bitcoins" name="total_bitcoins" id="total_bitcoins" />
-                <input type="text" placeholder="trade_volume" name="trade_volume" id="trade_volume" />
-                <input type="text" placeholder="txn_fees" name="txn_fees" id="txn_fees" />
-                <button>Predict</button>
+        <center>
+            <form method="GET" action="/manualprediction">
+                <div class="labels">
+                    <p>Market Price</p>
+                    <p>Average Block Size</p>
+                    <p>Total Blocks size</p>
+                    <p>Cost Per Transaction</p>
+                    <p>Difficulty</p>
+                    <p>Transaction Volume</p>
+                    <p>Hash Rate</p>
+                    <p>Market Cap</p>
+                    <p>Confirm Time</p>
+                    <p>Miners Revenue</p>
+                    <p>Number of Transactions</p>
+                    <p>Number of Trans. (Exclude Popular)</p>
+                    <p>Transactions Per Block</p>
+                    <p>Output Volume</p>
+                    <p>Total Bitcoins</p>
+                    <p>Trade Volume</p>
+                    <p>Transaction Fees</p>
+                </div>
+                <div class="inputs">
+                    <input type="text" placeholder="market_price" name="market_price" id="market_price" />
+                    <input type="text" placeholder="avg_block_size" name="avg_block_size" id="avg_block_size" />
+                    <input type="text" placeholder="blocks_size" name="blocks_size" id="blocks_size" />
+                    <input type="text" placeholder="cost_per_txn" name="cost_per_txn" id="cost_per_txn" />
+                    <input type="text" placeholder="difficulty" name="difficulty" id="difficulty" />
+                    <input type="text" placeholder="txn_vol" name="txn_vol" id="txn_vol" />
+                    <input type="text" placeholder="hash_rate" name="hash_rate" id="hash_rate" />
+                    <input type="text" placeholder="market_cap" name="market_cap" id="market_cap" />
+                    <input type="text" placeholder="confirm_time" name="confirm_time" id="confirm_time" />
+                    <input type="text" placeholder="miners_revenue" name="miners_revenue" id="miners_revenue" />
+                    <input type="text" placeholder="n_transaction" name="n_transaction" id="n_transaction" />
+                    <input type="text" placeholder="n_transction_exclude_popular" name="n_transaction_exclude_popular" id="n_transaction_exclude_popular" />
+                    <input type="text" placeholder="txn_per_block" name="txn_per_block" id="txn_per_block" />
+                    <input type="text" placeholder="output_vol" name="output_vol" id="output_vol" />
+                    <input type="text" placeholder="total_bitcoins" name="total_bitcoins" id="total_bitcoins" />
+                    <input type="text" placeholder="trade_volume" name="trade_volume" id="trade_volume" />
+                    <input type="text" placeholder="txn_fees" name="txn_fees" id="txn_fees" />
+                    <button>Predict</button>
+                </div>
                 <script>
+                    collections = {}
                     fetch("currentstats").then(function(val){
                          val.json().then(function(data) {
                              for (item in data[0]){
                                  console.log(item)
                                  document.getElementById(item).value = data[0][item]
                              }
+                             collections = data[0]
                          });
                      });
+
+function submit(){
+    /*update each element*/
+    for (item in collections){
+        collections[item] = document.getElementById(item).value;
+    }
+    /*fetch it from the url*/
+    params = {
+        headers:{"content-type":"application/json; charset=UTF-8"},
+        body:collections,
+        method:"POST"
+    };
+    fetch("manualprediction", params)
+        .then(data=>{return data.json})
+
+}
                 </script>
             </form>
+            <div class="prediction current"><h2 id="price">N/A</h2> <span>Price Prediction</span>
+            </center>
         </main>
     </body>
 </html>

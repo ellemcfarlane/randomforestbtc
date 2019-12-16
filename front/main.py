@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 import pickle
 from random_forest_regressor import RandomForestRegressor
 from random_forest_regressor import RandomTree
@@ -46,6 +47,19 @@ def predict():
 @app.route("/currentstats")
 def currentstats():
     return json.dumps(today)
+
+@app.route("/currentprice")
+def currentprice():
+    return str(today[0]['market_price'])
+
+@app.route("/manualprediction", methods=['GET'])
+def manualprediction():
+    frame = {
+            'market_price':float(request.args['market_price']), 'avg_block_size':float(request.args['avg_block_size']), 'blocks_size':float(request.args['blocks_size']), 'cost_per_txn':float(request.args['cost_per_txn']), 'difficulty':float(request.args['difficulty']), 'txn_vol':float(request.args['txn_vol']), 'hash_rate':float(request.args['hash_rate']),
+            'market_cap':float(request.args['market_cap']), 'confirm_time':float(request.args['confirm_time']), 'miners_revenue':float(request.args['miners_revenue']), 'n_transaction':float(request.args['n_transaction']), 'n_transaction_exclude_popular':float(request.args['n_transaction_exclude_popular']),
+            'txn_per_block':float(request.args['txn_per_block']), 'output_vol':float(request.args['output_vol']), 'total_bitcoins':float(request.args['total_bitcoins']), 'trade_volume':float(request.args['trade_volume']), 'txn_fees':float(request.args['txn_fees'])
+    }
+    return str(regressor.predict([frame])[0])
 
 @app.route("/graphdata")
 def graphdata():

@@ -7,7 +7,7 @@
     </head>
     <body>
         <nav>
-            <a href="main">Main</a>
+            <a href="">Main</a>
             <a href="manual">Manual Input</a>
         </nav>
         <main>
@@ -35,6 +35,35 @@
                 </script>
             </div>
             <canvas id="mainchart"></canvas>
+            <script>
+            chartdata = {}
+            fetch("currentstats").then(function(val){
+                val.json().then(function(data) {
+                    chartdata = data; 
+                });
+            });
+            
+            chart1data1 = [];
+            for(i = 0; i < chartdata["x_train"]; i++){
+                chart1data1.push({
+                    x: chartdata["x_train"][i],
+                    y: chartdata["y_train"][i]
+                });
+            }
+                dataout = {type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: "Training data",
+                            data: chart1data1
+                        },
+                        {
+                            label: "Prediction data"
+                            data: []
+                        }]
+                    }}
+item = document.getElementById("mainchart");
+chart = new Chart(item, dataout)
+            </script>
         </main>
     </body>
 </html>
