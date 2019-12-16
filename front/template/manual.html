@@ -12,7 +12,10 @@
         </nav>
         <main>
         <center>
-            <form method="GET" action="/manualprediction">
+            
+            <!-- <div class="prediction current"><h2 id="price">N/A</h2> <span>Price Prediction</span>-->
+            <!--replacethis-->
+            <form method="GET">
                 <div class="labels">
                     <p>Market Price</p>
                     <p>Average Block Size</p>
@@ -64,24 +67,9 @@
                          });
                      });
 
-function submit(){
-    /*update each element*/
-    for (item in collections){
-        collections[item] = document.getElementById(item).value;
-    }
-    /*fetch it from the url*/
-    params = {
-        headers:{"content-type":"application/json; charset=UTF-8"},
-        body:collections,
-        method:"POST"
-    };
-    fetch("manualprediction", params)
-        .then(data=>{return data.json})
-
-}
                 </script>
             </form>
-            <div class="prediction current"><h2 id="price">N/A</h2> <span>Price Prediction</span>
+
             </center>
         </main>
     </body>
