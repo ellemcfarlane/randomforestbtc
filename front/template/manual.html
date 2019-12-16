@@ -12,29 +12,30 @@
         </nav>
         <main>
             <form method="POST">
-                <input type="text" placeholder="market_price" name="market_price" id="0" />
-                <input type="text" placeholder="avg_block_size" name="avg_block_size" id="1" />
-                <input type="text" placeholder="blocks_size" name="blocks_size" id="2" />
-                <input type="text" placeholder="cost_per_txn" name="cost_per_txn" id="3" />
-                <input type="text" placeholder="difficulty" name="difficulty" id="4" />
-                <input type="text" placeholder="txn_vol" name="txn_vol" id="5" />
-                <input type="text" placeholder="hash_rate" name="hash_rate" id="6" />
-                <input type="text" placeholder="market_cap" name="market_cap" id="7" />
-                <input type="text" placeholder="confirm_time" name="confirm_time" id="8" />
-                <input type="text" placeholder="miners_revenue" name="miners_revenue" id="9" />
-                <input type="text" placeholder="n_transactions" name="n_transactions" id="10" />
-                <input type="text" placeholder="n_transctions_exclude_popular" name="n_transactions_exclude_popular" id="11" />
-                <input type="text" placeholder="txn_per_block" name="txn_per_block" id="12" />
-                <input type="text" placeholder="output_vol" name="output_vol" id="13" />
-                <input type="text" placeholder="total_bitcoins" name="total_bitcoins" id="14" />
-                <input type="text" placeholder="trade_volume" name="trade_volume" id="15" />
-                <input type="text" placeholder="txn_fees" name="txn_fees" id="16" />
+                <input type="text" placeholder="market_price" name="market_price" id="market_price" />
+                <input type="text" placeholder="avg_block_size" name="avg_block_size" id="avg_block_size" />
+                <input type="text" placeholder="blocks_size" name="blocks_size" id="blocks_size" />
+                <input type="text" placeholder="cost_per_txn" name="cost_per_txn" id="cost_per_txn" />
+                <input type="text" placeholder="difficulty" name="difficulty" id="difficulty" />
+                <input type="text" placeholder="txn_vol" name="txn_vol" id="txn_vol" />
+                <input type="text" placeholder="hash_rate" name="hash_rate" id="hash_rate" />
+                <input type="text" placeholder="market_cap" name="market_cap" id="market_cap" />
+                <input type="text" placeholder="confirm_time" name="confirm_time" id="confirm_time" />
+                <input type="text" placeholder="miners_revenue" name="miners_revenue" id="miners_revenue" />
+                <input type="text" placeholder="n_transaction" name="n_transaction" id="n_transaction" />
+                <input type="text" placeholder="n_transction_exclude_popular" name="n_transaction_exclude_popular" id="n_transaction_exclude_popular" />
+                <input type="text" placeholder="txn_per_block" name="txn_per_block" id="txn_per_block" />
+                <input type="text" placeholder="output_vol" name="output_vol" id="output_vol" />
+                <input type="text" placeholder="total_bitcoins" name="total_bitcoins" id="total_bitcoins" />
+                <input type="text" placeholder="trade_volume" name="trade_volume" id="trade_volume" />
+                <input type="text" placeholder="txn_fees" name="txn_fees" id="txn_fees" />
                 <button>Predict</button>
                 <script>
                     fetch("currentstats").then(function(val){
                          val.json().then(function(data) {
-                             for (i = 0; i < 17; i++){
-                                document.getElementById(i).value = data[i]
+                             for (item in data[0]){
+                                 console.log(item)
+                                 document.getElementById(item).value = data[0][item]
                              }
                          });
                      });

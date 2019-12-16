@@ -24,7 +24,6 @@ nav a:hover {
 }
 
 main {
-    display: flex;
     width: 90%;
     margin: auto;
     background-color: white;
@@ -32,19 +31,27 @@ main {
 }
 
 main canvas {
-    flex-grow: 2;
     padding: 10px;
     border: 1px solid black;
+    height: 300px;
+    width: 90%;
+    display: block;
+    margin: auto;
+    margin-top: 0px;
 }
-main div {
-    flex-shrink: 1;
-    padding: 15px;
+
+main .predictions {
+    display: block;
+    text-align: center;
 }
 
 main div .prediction {
-    margin: 15px;
-    font-size: 200%;
-    border-radius: 10px;
+    margin: 0px;
+    padding: 15px;
+    display: inline-block;
+    font-size: 150%;
+    width: 30%
+    /*border-radius: 10px;*/
 }
 
 .prediction span {
@@ -73,6 +80,22 @@ main div .prediction {
 
 .good:hover {
     background-color: #81FFA8;
+}
+
+.current {
+    background-color: #FCE94F;
+}
+
+.current:hover {
+    background-color: #FFF7B2;
+}
+
+.gain {
+    background-color: #787878;
+}
+
+.gain:hover {
+    background-color: #C9C9C9;
 }
 
 button {

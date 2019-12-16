@@ -1,9 +1,7 @@
 import random
 import numpy as np
 from sklearn import metrics
-from collections import defaultdict
 import multiprocessing as mp
-import line_profiler
 import pickle
 from matplotlib import pyplot as plt
 import pandas as pd
@@ -25,7 +23,7 @@ class RandomForestRegressor:
         self.all_trained = False
 
         self.random_state = 0
-    #@profile
+
     def build_forest(self, points, labels, num_subset_points="all", num_subset_attributes="all"):
         """
         Builds a random forest trained on the given points with their respective classification labels.
@@ -64,26 +62,23 @@ class RandomForestRegressor:
             bs_points.append(bootstrap_points)
             bs_labels.append(bootstrap_labels)
             self.random_state += 1
-        # train each tree in forest with random bootstrap sample of size sample_size
-        # count = 0
         # create multi-processing workers
         workers = mp.Pool(mp.cpu_count())
         task_results = []
         for tree, bootstrap_points, bootstrap_labels in zip(self.trees, bs_points, bs_labels):
-            #bootstrap_points, bootstrap_labels = self.bootstrap(points, labels, sample_size)
-            # get range of values for attributes
-            #tree.train(bootstrap_points, bootstrap_labels, self.pool_num_attributes, attributes)
-            task_results.append(workers.apply_async(RandomTree.train, (tree, bootstrap_points, bootstrap_labels, num_subset_attributes, attributes)))
-            # count += 1
-            # print(count)
-        # get results
+            # train each tree in forest with random bootstrap sample
+            task_results.append(workers.apply_async(RandomTree.train, (tree, bootstrap_points, bootstrap_labels,
+                                                     num_subset_attributes, attributes)))
+        # get trees
         new_trees = []
         count = 0
         for result in task_results:
             new_trees.append(result.get())
             print(count)
             count += 1
+        # set new trees to RF Regressor
         self.trees = new_trees
+
         # close pool of workers
         workers.close()
 
@@ -150,14 +145,12 @@ class RandomTree:
         # only set if node is leaf
         self.prediction_val = None
 
-    #@profile
     def train(self, points, labels, sample_attr_size, all_attributes):
         """
         trains the tree node on the given points.
         :param points: list of dictionaries where the key in each dictionary
             is an attribute category for the points.
         :param labels: list of classifications (floats, booleans, etc) for each point
-        :param possible_vals: dictionary
         :param sample_attr_size: int, number of random attributes to consider for each node
         :return: dictionary where attribute category maps to set of possible values for that attribute
         """
@@ -202,7 +195,7 @@ class RandomTree:
         :param sample_size: int specifying number of times to sample from attributes
         :return: list of possible categories
         """
-        #seed(99)
+        random.seed(99)
         num_attributes = len(attributes)
         if sample_size > num_attributes:
             raise Exception("Sample size ({}) cannot exceed number of attributes ({}).".format(sample_size, num_attributes))
@@ -305,35 +298,34 @@ if __name__ == '__main__':
 
     # Old BTC
 
-    dataset = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
-    dataset['Price'] = dataset['Price'].shift(3)
-    dataset.drop(0, axis=0, inplace=True)
-    dataset.drop(1, axis=0, inplace=True)
-    dataset.drop(2, axis=0, inplace=True)
-    y_orig = dataset.loc[:, 'Price'].values[::-1]
-    X_orig = dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'])\
-        .reindex(index=dataset.index[::-1]).to_dict('records')
-    dataset = dataset.sample(frac=1, random_state=0)
-
-    y = dataset.loc[:, 'Price'].values
-    dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'], inplace=True)
-    print(dataset.head())
+    # dataset = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
+    # dataset['Price'] = dataset['Price'].shift(3)
+    # dataset.drop(0, axis=0, inplace=True)
+    # dataset.drop(1, axis=0, inplace=True)
+    # dataset.drop(2, axis=0, inplace=True)
+    # y_orig = dataset.loc[:, 'Price'].values[::-1]
+    # X_orig = dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'])\
+    #     .reindex(index=dataset.index[::-1]).to_dict('records')
+    # dataset = dataset.sample(frac=1, random_state=0)
+    #
+    # y = dataset.loc[:, 'Price'].values
+    # dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'], inplace=True)
+    # print(dataset.head())
 
     #############################################################################
 
     # New BTC
 
-    # dataset = pd.read_csv('raw_csvs/bitcoin_final.csv', low_memory=True)
-    # dataset['market_price'] = dataset['market_price'].shift(-1)
-    # dataset.drop(len(dataset) - 1, axis=0, inplace=True)
-    # y_orig = dataset.loc[:, 'market_price'].values[::-1]
-    # X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'])\
-    #     .reindex(index=dataset.index[::-1]).to_dict('records')
-    # print(dataset.head())
-    # dataset = dataset.sample(frac=1, random_state=0)
-    # y = dataset.loc[:, 'market_price'].values
-    # dataset.drop(columns=['market_price', 'date', 'Unnamed: 0'], inplace=True)
-    # print(dataset.head())
+    dataset = pd.read_csv('raw_csvs/bitcoin_truncated.csv', low_memory=True)
+    dataset['market_price'] = dataset['market_price'].shift(-1)
+    dataset.drop(len(dataset) - 1, axis=0, inplace=True)
+    y_orig = dataset.loc[:, 'market_price'].values
+    X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1']).to_dict('records')
+    dataset = dataset.sample(frac=1, random_state=0)
+    y = dataset.loc[:, 'market_price'].values
+    dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
+    print("dataset preview:")
+    print(dataset.head())
 
     #############################################################################
 
@@ -348,17 +340,16 @@ if __name__ == '__main__':
     y_train = y[:train_sz]
     X_test = X[train_sz:]
     y_test = y[train_sz:]
-    print("train", y_train[:10])
 
     # train
     #20 trees, uses all features for best split and n points for subsampling
-    # regressor = RandomForestRegressor(1)
+    # regressor = RandomForestRegressor(20)
     # regressor.build_forest(X_train, y_train)
 
-    # with open('final_forest_2.pkl', 'wb') as file:
+    # with open('final_forest_drop0.pkl', 'wb') as file:
     #     pickle.dump(regressor, file)
-    #
-    with open('final_forest.pkl', 'rb') as file:
+
+    with open('final_forest_drop0.pkl', 'rb') as file:
         regressor = pickle.load(file)
 
     y_pred = regressor.predict(X_test)
@@ -366,7 +357,6 @@ if __name__ == '__main__':
     y_full = regressor.predict(X_orig)
 
     print("y-pred", y_pred[-10:])
-    print("x", X_orig[:1])
 
     #############################################################################
 
@@ -377,9 +367,7 @@ if __name__ == '__main__':
     accuracy = 100 - map
 
     print('Performance')
-    print('Average Error: ${:0.4f}.'.format(np.mean(errors)))
     print('Accuracy = {:0.2f}%.'.format(accuracy))
-    print()
     print('Mean Abs Error', metrics.mean_absolute_error(y_test, y_pred))
     print('Mean Sq Error', metrics.mean_squared_error(y_test, y_pred))
     print('Root Mean Sq Error', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
@@ -399,11 +387,8 @@ if __name__ == '__main__':
     axs[1].scatter(x_test, y_test, c='black')
     axs[1].scatter(x_test, y_pred, c='red', marker=".")
 
-    axs[2].scatter(x_full, y_orig, c='black')
+    axs[2].plot(x_full, y_orig, c='black', linewidth=6)
     axs[2].plot(x_full, y_full, c='red')
-    axs[2].set_xlabel('Relative dates from 2012-2016')
+    axs[2].set_xlabel('Relative dates from 2010-2019')
 
     plt.show()
-    print("random end state", regressor.random_state)
-
-

@@ -5,6 +5,9 @@ import json
 import numpy as np
 
 class scraper:
+
+    daily = []
+
     def s_avg_block_size(self):
         return json.loads(urllib.request.urlopen("https://api.blockchain.info/charts/avg-block-size?format=json").read())
 
@@ -31,22 +34,31 @@ class scraper:
 
 
 
-    def gettoday(self):
-        df_names = {
-         0:'market_price', 1:'avg_block_size', 2:'blocks_size', 3:'cost_per_txn', 4:'difficulty', 5:'txn_vol', 6:'hash_rate',
-         7:'market_cap', 8:'confirm_time', 9:'miners_revenue', 10:'n_transaction', 11:'n_transaction_exclude_popular',
-         12:'txn_per_block', 13:'output_vol', 14:'total_bitcoins', 15:'trade_volume', 16:'txn_fees'
-        }
+    def __init__(self):
         stats = statistics.get()
-        dataframes = [
+        self.daily = [
          stats.market_price_usd, self.s_avg_block_size()['values'][-1]['y'], stats.blocks_size, self.s_cost_per_txn()['values'][-1]['y'], stats.difficulty, self.s_txn_vol()['values'][-1]['y'], stats.hash_rate,
          self.s_market_cap()['values'][-1]['y'], self.s_confirm_time()['values'][-1]['y'], stats.miners_revenue_usd, stats.number_of_transactions, self.s_n_transaction_exclude_popular()['values'][-1]['y'],
          self.s_txn_per_block()['values'][-1]['y'], self.s_output_vol()['values'][-1]['y'], stats.total_btc, stats.trade_volume_usd, stats.total_fees_btc
         ]
+<<<<<<< HEAD:front/getdata.py
+
+    def gettoday(self):
+        df_names = {
+         'market_price':self.daily[0], 'avg_block_size':self.daily[1], 'blocks_size':self.daily[2], 'cost_per_txn':self.daily[3], 'difficulty':self.daily[4], 'txn_vol':self.daily[5], 'hash_rate':self.daily[6],
+         'market_cap':self.daily[7], 'confirm_time':self.daily[8], 'miners_revenue':self.daily[9], 'n_transaction':self.daily[10], 'n_transaction_exclude_popular':self.daily[11],
+         'txn_per_block':self.daily[12], 'output_vol':self.daily[13], 'total_bitcoins':self.daily[14], 'trade_volume':self.daily[15], 'txn_fees':self.daily[16]
+        }
+        #toreturn = pd.DataFrame(self.daily)
+        #toreturn = toreturn.transpose()
+        #toreturn = toreturn.rename(columns = df_names)
+        return df_names
+=======
         toreturn = pd.DataFrame(dataframes)
         toreturn = toreturn.transpose()
         toreturn = toreturn.rename(columns = df_names)
         print(len(toreturn))
         toreturn = toreturn.to_dict('records')
         return toreturn
+>>>>>>> 7abf78e34a27d9471f829146150ef17fe12fb3cb:getdata.py
 
