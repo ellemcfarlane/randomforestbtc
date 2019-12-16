@@ -360,7 +360,7 @@ if __name__ == '__main__':
 
     #############################################################################
 
-    # Evaluate algo performance
+    # Evaluate algo performance.txt
 
     errors = abs(y_pred - y_test)
     map = 100 * np.mean(errors / y_test)

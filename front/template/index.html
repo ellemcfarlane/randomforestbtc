@@ -7,21 +7,90 @@
     </head>
     <body>
         <nav>
-            <a href="main">Main</a>
+            <a href="">Main</a>
             <a href="manual">Manual Input</a>
         </nav>
         <main>
-            <canvas id="mainchart"></canvas>
-            <div>
-                <div class="prediction good"><h2 id="pred">UP</h2> <span>Daily prediction</span></div>
+            <div class="predictions">
+                <div class="prediction current"><h2 id="price">9999999.99999</h2> <span>Current Price</span></div><div class="prediction bad"><h2 id="pred">9999999.99999</h2> <span>Current Prediction</span></div><div class="prediction gain"><h2 id="gain">9999999.99999</h2> <span>Price Gain</span></div>
                 <script>
+                    current = 0
+                    prediction = 0
                     fetch("predict").then(function(val){
                         val.text().then(function(data) {
                             document.getElementById("pred").innerHTML = data;
-                        }); 
+                            prediction = data;
+                        });
                     });
+
+                    fetch("currentprice").then(function(val){
+                        val.text().then(function(data) {
+                            document.getElementById("price").innerHTML = data;
+                            document.getElementById("gain").innerHTML = prediction - data;
+                        });
+                    });
+                    
+
+
                 </script>
             </div>
+            <canvas id="chart1"></canvas>
+            <canvas id="chart2"></canvas>
+            <canvas id="chart3"></canvas>
+            <script>
+            fetch("graphdata").then(function(val){
+                val.json().then(function(data) {
+                    chart1 = new Chart(document.getElementById("chart1"), {
+                        type: 'scatter',
+                        data: {
+                        datasets: [{
+                            label: 'Training data',
+                            backgroundColor: "rgba(252, 233, 79, 1)",
+                            data: data[0]
+                        },
+                        {
+                            label: 'Predictions',
+                            backgroundColor: "rgba(255, 65, 65, 1)",
+                            data: data[1]
+                        }]
+
+                    }
+                    });
+                    chart2 = new Chart(document.getElementById("chart2"), {
+                        type: 'scatter',
+                        data: {
+                        datasets: [{
+                            label: 'Test data',
+                            backgroundColor: "rgba(252, 233, 79, 1)",
+                            data: data[2]
+                        },
+                        {
+                            label: 'Predictions',
+                            backgroundColor: "rgba(255, 65, 65, 1)",
+                            data: data[3]
+                        }]
+
+                    }
+                    });
+                    chart3 = new Chart(document.getElementById("chart3"), {
+                        type: 'scatter',
+                        data: {
+                        datasets: [{
+                            label: 'Full data',
+                            backgroundColor: "rgba(252, 233, 79, 1)",
+                            data: data[4]
+                        },
+                        {
+                            label: 'Predictions',
+                            backgroundColor: "rgba(255, 65, 65, 1)",
+                            data: data[5]
+                        }]
+
+                    }
+                    });
+                });
+            });
+            </script>
         </main>
     </body>
 </html>
