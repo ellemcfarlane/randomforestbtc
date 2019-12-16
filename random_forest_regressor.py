@@ -342,13 +342,15 @@ if __name__ == '__main__':
     y_test = y[train_sz:]
 
     # train
-    #20 trees, uses all features for best split and n points for subsampling
+    # 20 trees, using all features for best split and n points for subsampling
     # regressor = RandomForestRegressor(20)
     # regressor.build_forest(X_train, y_train)
 
+    # save trained model in pickle file
     # with open('final_forest_drop0.pkl', 'wb') as file:
     #     pickle.dump(regressor, file)
 
+    # loads pre-trained model
     with open('final_forest_drop0.pkl', 'rb') as file:
         regressor = pickle.load(file)
 
@@ -360,7 +362,7 @@ if __name__ == '__main__':
 
     #############################################################################
 
-    # Evaluate algo performance
+    # Evaluate algo performance.txt
 
     errors = abs(y_pred - y_test)
     map = 100 * np.mean(errors / y_test)
