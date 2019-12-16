@@ -6,8 +6,48 @@ Mean Abs Error $141.083555361241
 Mean Sq Error 121077.72374393257
 Root Mean Sq Error 347.9622447104464
 
+
 pre-built model:
 Accuracy = 91.00%.
 Mean Abs Error $142.66281087125049
 Mean Sq Error 116470.66067276517
 Root Mean Sq Error 341.2779815235158
+
+
+Linear regression:
+                                Coefficient
+Unnamed: 0                     2.155926e-01
+avg_block_size                 3.436184e+01
+blocks_size                    1.010449e-03
+cost_per_txn                   3.581029e+00
+difficulty                    -1.634475e-13
+txn_vol                       -4.705393e-06
+hash_rate                     -6.699325e-06
+market_cap                     5.465923e-08
+confirm_time                   1.627414e+00
+miners_revenue                 1.647868e-05
+n_transaction                 -1.914775e-04
+n_transaction_exclude_popular  1.660369e-05
+txn_per_block                  5.946402e-03
+output_vol                    -2.153681e-07
+total_bitcoins                -1.137773e-05
+trade_volume                   8.291092e-08
+txn_fees                      -3.447985e-02
+
+Mean Absolute Error: 23.957118295879745
+Mean Squared Error: 1632.4113911023815
+Root Mean Squared Error: 40.403111156226345
+
+
+Gradient Boosting Regressor:
+
+Average Error: $1124.0955.
+Accuracy = 77.51%.
+Mean Absolute Error: 1124.0954835836224
+Mean Squared Error: 2047079.7277957364
+Root Mean Squared Error: 1430.7619395957304
+
+
+
+
+
