@@ -47,5 +47,6 @@ class scraper:
         toreturn = toreturn.transpose()
         toreturn = toreturn.rename(columns = df_names)
         print(len(toreturn))
+        toreturn = toreturn.to_dict('records')
         return toreturn
 

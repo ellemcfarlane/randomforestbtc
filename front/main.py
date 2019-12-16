@@ -32,8 +32,7 @@ def stylesheet():
 
 @app.route("/predict")
 def predict():
-    return "Null"
-    #return str(regressor.predict(today)[0])
+    return str(regressor.predict(today)[0])
 
 
 app.run()
