@@ -59,7 +59,7 @@ print("y-pred", y_pred[-10:])
 #     pickle.dump(regressor, file)
 
 
-# Evaluate algo performance
+# Evaluate algo performance.txt
 errors = abs(y_pred - y_test)
 map = 100 * np.mean(errors / y_test)
 accuracy = 100 - map
