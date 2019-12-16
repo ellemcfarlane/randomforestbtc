@@ -19,6 +19,7 @@ This will allow the scraping to work for current day.
 ### Current predictions
 Run the front/Main.py file; click the http://127.0.0.1:5000/ link.
 The resulting prediction is based on the current day's BTC data. 
+To input custom data point, click on the manual input tab and fill in the appropriate fields.
 
 ### Retrain model
 To train your own model, and view prediction results, do the following:
