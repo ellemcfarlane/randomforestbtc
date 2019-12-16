@@ -74,7 +74,7 @@ class RandomForestRegressor:
         count = 0
         for result in task_results:
             new_trees.append(result.get())
-            print(count)
+            print("Tree:", count)
             count += 1
         # set new trees to RF Regressor
         self.trees = new_trees
