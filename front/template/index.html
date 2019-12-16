@@ -14,19 +14,16 @@
             <div class="predictions">
                 <div class="prediction current"><h2 id="price">9999999.99999</h2> <span>Current Price</span></div><div class="prediction bad"><h2 id="pred">9999999.99999</h2> <span>Current Prediction</span></div><div class="prediction gain"><h2 id="gain">9999999.99999</h2> <span>Price Gain</span></div>
                 <script>
-                    current = 0
-                    prediction = 0
                     fetch("predict").then(function(val){
                         val.text().then(function(data) {
                             document.getElementById("pred").innerHTML = data;
-                            prediction = data;
                         });
                     });
 
                     fetch("currentprice").then(function(val){
                         val.text().then(function(data) {
                             document.getElementById("price").innerHTML = data;
-                            document.getElementById("gain").innerHTML = prediction - data;
+                            document.getElementById("gain").innerHTML = document.getElementById("pred").innerHTML - data;
                         });
                     });
                     
