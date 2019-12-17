@@ -1,8 +1,8 @@
 from flask import Flask
 from flask import request
-import pickle
 from random_forest_regressor import RandomForestRegressor
 from random_forest_regressor import RandomTree
+import pickle
 from getdata import scraper
 import json
 import pandas as pd
@@ -24,7 +24,7 @@ getdata = scraper()
 today = getdata.gettoday()
 
 #loading the pickle data
-with open('../final_forest.pkl', 'rb') as file:
+with open('../final_forest_drop0.pkl', 'rb') as file:
     regressor = pickle.load(file)
 
 
@@ -93,7 +93,6 @@ def graphdata():
     x_full = range(len(y_pred) + len(y_train_pred))
     #time to stitch the lists together in a useful manner
     return json.dumps([feedtoformat(x_train, y_train), feedtoformat(x_train, y_train_pred), feedtoformat(x_test, y_test), feedtoformat(x_test, y_pred), feedtoformat(x_full, y_orig), feedtoformat(x_full, y_full)])
-    #return json.dumps({"x_train":list(x_train), "y_train":list(y_train), "x_train":list(x_train), "y_train_pred":list(y_train_pred), "y_pred":list(y_pred), "y_orig":list(y_orig), "x_full":list(x_full), "y_full":list(y_full)})
 
 #feed data into format for chartjs
 def feedtoformat(set1, set2):
