@@ -6,6 +6,10 @@ Trained on data from 2010-2019.
   * BTC price in USD 3 days ahead of input BTC data
 * Visualization of:
   * RF model fit to test and training data
+  
+![Alt_text](screenshots/pred_today.png)
+![Alt_text](screenshots/rfmodel.png)
+![Alt_text](screenshots/btcpredictions.png)
 
 ## Basic Usage
 For all uses, ensure proper requirements are installed by running the
