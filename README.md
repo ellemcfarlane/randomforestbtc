@@ -36,7 +36,7 @@ To train your own model, and view prediction results, do the following:
 where 20 in this case represents number of trees in the forest, X_train and X_test lists of dictionaries, each data point as a dictionary
 and y_pred a list of numbers, representing predictions of the tree.
 
-## Results of our model
+## Results
 Without retraining our model, to see the results based on 20 trees, bootstrap sample of original
 training size, and considering all features, simply run the random_forest_regressor.py file in the main folder.
 
