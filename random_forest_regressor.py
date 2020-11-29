@@ -130,7 +130,7 @@ class RandomTree:
     def __init__(self, false_child=None, true_child=None):
         """
         :param false_child: child to go to if point is false for given attribute
-        :param true_child: child to go to if point is false for given attribute
+        :param true_child: child to go to if point is true for given attribute
         """
         # node divides samples via attribute
         self.attribute = None
@@ -152,7 +152,7 @@ class RandomTree:
             is an attribute category for the points.
         :param labels: list of classifications (floats, booleans, etc) for each point
         :param sample_attr_size: int, number of random attributes to consider for each node
-        :return: dictionary where attribute category maps to set of possible values for that attribute
+        :param all_attributes: dictionary where attribute category maps to set of possible values for that attribute
         """
         if not points or not labels:
             raise Warning("Must have at least 1 point and 1 label to train with.")
