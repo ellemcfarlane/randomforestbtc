@@ -12,18 +12,30 @@ Trained on data from 2010-2019.
 ![Alt_text](screenshots/btcpredictions.png)
 
 ## Basic Usage
-For all uses, ensure proper requirements are installed by running the
-front/makefile file in command line.
+### Installation
+Create venv and install requirements:
+```
+python3 -m venv <venv-name>
+source <venv-name>/bin/activate
+cd front/
+make install
+```
 
 Note: If mac users receive SSL: CERTIFCATE_VERIFY_FAILED URLError, please run the following commands
 in terminal to Install Certificates.command file:
 open /Applications/Python\ 3.7/Install\ Certificates.command
 
 This will allow the scraping to work for current day.
+
 ### Current predictions
-Run the front/Main.py file; load the resulting http://127.0.0.1:5000/ address in your browser.
-The resulting prediction is based on the current day's BTC data. 
-To input custom data point, click on the manual input tab and fill in the appropriate fields.
+Run the front/Main.py file or equivalently:
+```
+cd front/
+make run
+```
+load the resulting http://127.0.0.1:5000/ address in your browser.  
+The resulting prediction is based on the current day's BTC data.  
+To input custom data point, click on the manual input tab and fill in the appropriate fields.  
 
 ### Retrain model
 To train your own model, and view prediction results, do the following:
