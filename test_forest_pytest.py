@@ -2,10 +2,6 @@ import pickle
 from random_forest_regressor import RandomForestRegressor, RandomTree
 # tests the RandomForestRegressor class
 
-# def load_data_frame(path):
-#     with open(path, 'rb') as file:
-#         return pickle.load(file)
-
 points = [{'Date': '2016-07-17', 'Confirm Time': 7.76, 'Block Size': 0.68, 'Cost/TXN': 7.32, 'Difficulty': 213398925331.0, 'TXN Vol': 129816925.1, 'Hash Rate': 1665474.54, 'Market Cap': 10453324633.1, 'Miners Rev': 1302095.02, 'TXN/Block': 1160.45, 'Number of TXN': 182192.0, 'Unique Addresses': 356533.0, 'Total Bitcoin': 15763137.5, 'TXN Fees': 50.67, 'Trade Vol': 13030366.55, 'TXN/Trade Ratio': 60.58214548260001, 'Price': 679.051, 'Price Binary': 1},
           {'Date': '2016-07-16', 'Confirm Time': 8.98, 'Block Size': 0.79, 'Cost/TXN': 5.38, 'Difficulty': 213398925331.0, 'TXN Vol': 187503475.3, 'Hash Rate': 1432095.94, 'Market Cap': 10514437454.2, 'Miners Rev': 1127082.34, 'TXN/Block': 1600.59, 'Number of TXN': 216081.0, 'Unique Addresses': 367739.0, 'Total Bitcoin': 15761175.0, 'TXN Fees': 55.22, 'Trade Vol': 26928546.83, 'TXN/Trade Ratio': 93.1540589114, 'Price': 663.541, 'Price Binary': 0},
           {'Date': '2016-07-15', 'Confirm Time': 9.23, 'Block Size': 0.79, 'Cost/TXN': 5.49, 'Difficulty': 213398925331.0, 'TXN Vol': 164674255.32, 'Hash Rate': 1506352.77, 'Market Cap': 10423167437.6, 'Miners Rev': 1175290.03, 'TXN/Block': 1553.9, 'Number of TXN': 220655.0, 'Unique Addresses': 367953.0, 'Total Bitcoin': 15759487.5, 'TXN Fees': 58.38, 'Trade Vol': 34318017.31, 'TXN/Trade Ratio': 76.3547780853, 'Price': 664.8760000000001, 'Price Binary': 1},
