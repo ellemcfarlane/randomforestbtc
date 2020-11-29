@@ -1,3 +1,5 @@
 # Ignore the following:
 Bitcoin_CSV_Maker.py
 venv
+__pychache__
+.idea
