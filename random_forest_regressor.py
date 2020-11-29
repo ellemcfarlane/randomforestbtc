@@ -288,34 +288,6 @@ class RandomTree:
 
 
 if __name__ == '__main__':
-
-    # Petroleum
-    # dataset = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False).sample(frac=1, random_state=0)
-    # y = dataset.iloc[:, 4].values
-    # dataset.drop(dataset.columns[4], axis=1, inplace=True)
-
-    #############################################################################
-
-    # Old BTC
-
-    # dataset = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
-    # dataset['Price'] = dataset['Price'].shift(3)
-    # dataset.drop(0, axis=0, inplace=True)
-    # dataset.drop(1, axis=0, inplace=True)
-    # dataset.drop(2, axis=0, inplace=True)
-    # y_orig = dataset.loc[:, 'Price'].values[::-1]
-    # X_orig = dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'])\
-    #     .reindex(index=dataset.index[::-1]).to_dict('records')
-    # dataset = dataset.sample(frac=1, random_state=0)
-    #
-    # y = dataset.loc[:, 'Price'].values
-    # dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'], inplace=True)
-    # print(dataset.head())
-
-    #############################################################################
-
-    # New BTC
-
     dataset = pd.read_csv('raw_csvs/bitcoin_truncated.csv', low_memory=True)
     dataset['market_price'] = dataset['market_price'].shift(-1)
     dataset.drop(len(dataset) - 1, axis=0, inplace=True)
