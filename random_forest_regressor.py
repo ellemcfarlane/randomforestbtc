@@ -288,6 +288,9 @@ class RandomTree:
 
 
 if __name__ == '__main__':
+
+    # Load data
+    
     dataset = pd.read_csv('raw_csvs/bitcoin_truncated.csv', low_memory=True)
     dataset['market_price'] = dataset['market_price'].shift(-1)
     dataset.drop(len(dataset) - 1, axis=0, inplace=True)
