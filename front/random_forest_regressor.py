@@ -1,10 +1,12 @@
-import random
-import numpy as np
 from sklearn import metrics
-import multiprocessing as mp
-import pickle
 from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
+import multiprocessing as mp
+import random
+import pickle
+import argparse
+import time
 
 class RandomForestRegressor:
     """
@@ -74,7 +76,7 @@ class RandomForestRegressor:
         count = 0
         for result in task_results:
             new_trees.append(result.get())
-            print(count)
+            print("Tree:", count)
             count += 1
         # set new trees to RF Regressor
         self.trees = new_trees
@@ -130,7 +132,7 @@ class RandomTree:
     def __init__(self, false_child=None, true_child=None):
         """
         :param false_child: child to go to if point is false for given attribute
-        :param true_child: child to go to if point is false for given attribute
+        :param true_child: child to go to if point is true for given attribute
         """
         # node divides samples via attribute
         self.attribute = None
@@ -152,7 +154,7 @@ class RandomTree:
             is an attribute category for the points.
         :param labels: list of classifications (floats, booleans, etc) for each point
         :param sample_attr_size: int, number of random attributes to consider for each node
-        :return: dictionary where attribute category maps to set of possible values for that attribute
+        :param all_attributes: dictionary where attribute category maps to set of possible values for that attribute
         """
         if not points or not labels:
             raise Warning("Must have at least 1 point and 1 label to train with.")
@@ -288,70 +290,66 @@ class RandomTree:
 
 
 if __name__ == '__main__':
-
-    # Petroleum
-    # dataset = pd.read_csv('raw_csvs/petrol_consumption.csv', low_memory=False).sample(frac=1, random_state=0)
-    # y = dataset.iloc[:, 4].values
-    # dataset.drop(dataset.columns[4], axis=1, inplace=True)
-
-    #############################################################################
-
-    # Old BTC
-
-    # dataset = pd.read_csv('raw_csvs/df_final.csv', low_memory=True)
-    # dataset['Price'] = dataset['Price'].shift(3)
-    # dataset.drop(0, axis=0, inplace=True)
-    # dataset.drop(1, axis=0, inplace=True)
-    # dataset.drop(2, axis=0, inplace=True)
-    # y_orig = dataset.loc[:, 'Price'].values[::-1]
-    # X_orig = dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'])\
-    #     .reindex(index=dataset.index[::-1]).to_dict('records')
-    # dataset = dataset.sample(frac=1, random_state=0)
-    #
-    # y = dataset.loc[:, 'Price'].values
-    # dataset.drop(columns=['Price', 'Date', 'Unnamed: 0'], inplace=True)
-    # print(dataset.head())
-
-    #############################################################################
-
-    # New BTC
-
+    # Parse any command line arguments
+    default_model = 'final_forest_drop0.pkl'
+    default_output = 'ra_model{utc_time}.pkl'.format(utc_time=time.time())
+    default_days = 3
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", help="Give file name if training and want to save model to pkl file",
+                        nargs='?', const=default_output, default=default_output)
+    parser.add_argument("--model", help="Give pkl file name of model to load", nargs='?', const=default_model)
+    parser.add_argument("--days", help="Give number of days ahead model should predict", nargs='?', type=int, default=default_days)
+    args = parser.parse_args()
+    output_file = args.output
+    model_file = args.model
+    predict_days_ahead = args.days
+    
+    # Load data
     dataset = pd.read_csv('raw_csvs/bitcoin_truncated.csv', low_memory=True)
-    dataset['market_price'] = dataset['market_price'].shift(-1)
-    dataset.drop(len(dataset) - 1, axis=0, inplace=True)
+    dataset_len = len(dataset)
+    if predict_days_ahead >= dataset_len:
+        raise Exception("number of days ahead predicted must be less than dataset size: {0}".format(dataset_len))
+    dataset['market_price'] = dataset['market_price'].shift(-1*predict_days_ahead)
+    # drop last rows (should be predict_days_ahead number of them) where cannot predict ahead
+    dataset.drop(dataset.index[dataset_len - predict_days_ahead:dataset_len], axis=0, inplace=True)
+
     y_orig = dataset.loc[:, 'market_price'].values
     X_orig = dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1']).to_dict('records')
     dataset = dataset.sample(frac=1, random_state=0)
     y = dataset.loc[:, 'market_price'].values
+    # drop unneeded and dummy columns
     dataset.drop(columns=['market_price', 'date', 'Unnamed: 0', 'Unnamed: 0.1'], inplace=True)
     print("dataset preview:")
     print(dataset.head())
 
     #############################################################################
 
-    # Train Forest
+    # load pre-trained forest model
+    if model_file:
+        with open(model_file, 'rb') as file:
+            regressor = pickle.load(file)
 
-    X = dataset.to_dict('records')
+    # train forest model
+    else:
+        X = dataset.to_dict('records')
 
-    # split into training vs test attributes/labels
-    train_sz = int(.8*len(X))
+        # split into training vs test attributes/labels
+        train_sz = int(.8*len(X))
 
-    X_train = X[:train_sz]
-    y_train = y[:train_sz]
-    X_test = X[train_sz:]
-    y_test = y[train_sz:]
+        X_train = X[:train_sz]
+        y_train = y[:train_sz]
+        X_test = X[train_sz:]
+        y_test = y[train_sz:]
 
-    # train
-    #20 trees, uses all features for best split and n points for subsampling
-    # regressor = RandomForestRegressor(20)
-    # regressor.build_forest(X_train, y_train)
+        # train
+        # 20 trees, using all features for best split and n points for subsampling
+        regressor = RandomForestRegressor(20)
+        regressor.build_forest(X_train, y_train)
 
-    # with open('final_forest_drop0.pkl', 'wb') as file:
-    #     pickle.dump(regressor, file)
-
-    with open('final_forest_drop0.pkl', 'rb') as file:
-        regressor = pickle.load(file)
-
+        # save trained model in pickle file
+        with open(output_file, 'wb') as file:
+            pickle.dump(regressor, file)
+                    
     y_pred = regressor.predict(X_test)
     y_train_pred = regressor.predict(X_train)
     y_full = regressor.predict(X_orig)
