@@ -38,7 +38,7 @@ The resulting prediction is based on the current day's BTC data.
 To input custom data point, click on the manual input tab and fill in the appropriate fields.  
 
 ### Retrain model
-To train your own model, and view prediction results, do the following:
+To train your own model, and view prediction results, edit this part of the script:
 ```
     RFregressor = RandomForestRegressor(20)
     RFregressor.build_forest(X_train, y_train)
@@ -47,6 +47,14 @@ To train your own model, and view prediction results, do the following:
 ```
 where 20 in this case represents number of trees in the forest, X_train and X_test lists of dictionaries, each data point as a dictionary
 and y_pred a list of numbers, representing predictions of the tree.
+
+### Command line
+run: python random_forest_regressor.py -{flags} (default behavior is to train a new model)
+* training:
+  * --output file name where model will be saved, should end in .pkl (default: ra_model{utc_time}.pkl)
+  * --days number of days ahead to predict (default: 3)
+* loading previous model:
+  * --model pkl file name of previous model to be loaded
 
 ## Results
 Without retraining our model, to see the results based on 20 trees, bootstrap sample of original

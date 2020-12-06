@@ -1,10 +1,10 @@
 20 trees
 
 our model:
-Accuracy = 89.37%.
-Mean Abs Error $141.083555361241
-Mean Sq Error 121077.72374393257
-Root Mean Sq Error 347.9622447104464
+Accuracy = 86.30%.
+Mean Abs Error 258.018153986892
+Mean Sq Error 381608.47202442115
+Root Mean Sq Error 617.744665719115
 
 #############################################################################
 
